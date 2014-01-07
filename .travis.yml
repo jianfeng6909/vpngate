@@ -1,0 +1,5 @@
+language: go
+
+install:
+  - rm -rf examples
+  - go get github.com/StalkR/httpcache
