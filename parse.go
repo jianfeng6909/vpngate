@@ -9,6 +9,7 @@ import (
 	"io"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // parseList parses vpngate CSV.
@@ -61,12 +62,14 @@ func parseRecord(c *csv.Reader) (*VPN, error) {
 	v.Hostname = d[0]
 	v.IP = d[1]
 	v.Score, _ = strconv.Atoi(d[2])
-	v.Ping, _ = strconv.Atoi(d[3])
+	ping, _ := strconv.Atoi(d[3])
+	v.Ping = time.Duration(ping) * time.Millisecond
 	v.Speed, _ = strconv.Atoi(d[4])
 	v.Country = d[5]
 	v.CountryShort = d[6]
 	v.Sessions, _ = strconv.Atoi(d[7])
-	v.Uptime, _ = strconv.Atoi(d[8])
+	uptime, _ := strconv.Atoi(d[8])
+	v.Uptime = time.Duration(uptime) * time.Millisecond
 	v.Users, _ = strconv.Atoi(d[9])
 	v.Traffic, _ = strconv.Atoi(d[10])
 	v.LogType = d[11]

@@ -6,20 +6,21 @@ package vpngate
 
 import (
 	"fmt"
+	"time"
 )
 
 // A VPN represents a vpngate server.
 type VPN struct {
 	Hostname     string
 	Score        int
-	Ping         int    // ms
+	Ping         time.Duration
 	Speed        int    // bps
 	Country      string // e.g. Japan
 	CountryShort string // e.g. JP
 	Sessions     int    // Currently active
-	Uptime       int    // ms
-	Users        int    // Total users
-	Traffic      int    // Total traffic
+	Uptime       time.Duration
+	Users        int // Total users
+	Traffic      int // Total traffic
 	LogType      string
 	Operator     string
 	Message      string
