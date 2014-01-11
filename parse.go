@@ -81,6 +81,8 @@ func parseRecord(c *csv.Reader) (*VPN, error) {
 		return nil, err
 	}
 	r := bytes.NewBuffer(b)
+	textMode := false
+	text := ""
 	for {
 		line, err := r.ReadString('\n')
 		if err == io.EOF {
@@ -88,7 +90,34 @@ func parseRecord(c *csv.Reader) (*VPN, error) {
 		} else if err != nil {
 			return nil, err
 		}
-		words := strings.Split(strings.TrimSpace(line), " ")
+		trimmed := strings.TrimSpace(line)
+
+		switch trimmed {
+		case "":
+			continue
+		case "<ca>", "<cert>", "<key>":
+			textMode = true
+			text = ""
+			continue
+		case "</ca>", "</cert>", "</key>":
+			textMode = false
+			text = strings.TrimSpace(text)
+			switch trimmed {
+			case "</ca>":
+				v.CA = text
+			case "</cert>":
+				v.Cert = text
+			case "</key>":
+				v.Key = text
+			}
+			continue
+		}
+		if textMode {
+			text += line
+			continue
+		}
+
+		words := strings.Split(trimmed, " ")
 		switch {
 		case len(words) < 2:
 			continue
@@ -108,8 +137,9 @@ func parseRecord(c *csv.Reader) (*VPN, error) {
 		}
 	}
 
-	if v.Proto == "" || v.IP == "" || v.Port == 0 || v.Cipher == "" || v.Auth == "" {
-		return nil, fmt.Errorf("invalid config")
+	if v.Proto == "" || v.IP == "" || v.Port == 0 || v.Cipher == "" ||
+		v.Auth == "" || v.CA == "" || v.Cert == "" || v.Key == "" {
+		return nil, fmt.Errorf("invalid config or parsing")
 	}
 
 	return v, nil

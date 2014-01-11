@@ -31,6 +31,9 @@ type VPN struct {
 	Port   int
 	Cipher string
 	Auth   string
+	CA     string
+	Cert   string
+	Key    string
 }
 
 // OpenVPN config of this VPN.
@@ -45,5 +48,14 @@ nobind
 persist-key
 persist-tun
 client
-verb 3`, v.Proto, v.IP, v.Port, v.Cipher, v.Auth)
+verb 3
+<ca>
+%s
+</ca>
+<cert>
+%s
+</cert>
+<key>
+%s
+</key>`, v.Proto, v.IP, v.Port, v.Cipher, v.Auth, v.CA, v.Cert, v.Key)
 }
