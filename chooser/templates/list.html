@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>VPN Gate</title>
+	<link rel="stylesheet" type="text/css" href="/static/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+<h1>VPN Gate servers <small>(<a href="/refresh">refresh</a>)</small></h1>
+<table class="table table-condensed">
+	<thead>
+		<tr>
+			<th>Score</ht>
+			<th>Country</th>
+			<th>Ping</th>
+			<th>Speed</th>
+			<th>Uptime</th>
+			<th>Sessions</th>
+			<th>Total users</th>
+			<th>Total traffic</th>
+			<th>Use</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{$c := .Current}}
+		{{range .List}}
+		<tr{{if eq .Hostname $c.Hostname}} class="current"{{end}}>
+			<td>{{fmtNumber .Score}}</td>
+			<td><span title="{{.IP}}:{{.Port}} ({{.Proto}})">{{.Country}}</span></td>
+			<td>{{.Ping}}</td>
+			<td>{{fmtNumber .Speed}}b/s</td>
+			<td>{{fmtUptime .Uptime}}</td>
+			<td>{{.Sessions}}</td>
+			<td>{{.Users}}</td>
+			<td>{{fmtNumber .Traffic}}B</td>
+			<td>
+				{{if eq .Hostname $c.Hostname}}
+					current
+				{{else}}
+					<a href="/choose?hostname={{.Hostname}}">use</a>
+				{{end}}
+			</td>
+		</tr>
+		{{end}}
+	</tbody>
+</table>
+</div>
+</body>
+</html>
