@@ -44,7 +44,7 @@ func parseList(f io.Reader) (map[string]VPN, error) {
 			return nil, err
 		}
 		if _, ok := m[vpn.Hostname]; ok {
-			return nil, fmt.Errorf("already exists: %+v", vpn)
+			return nil, fmt.Errorf("%s already exists", vpn.Hostname)
 		}
 		m[vpn.Hostname] = *vpn
 	}
