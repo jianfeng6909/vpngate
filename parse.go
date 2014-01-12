@@ -13,7 +13,7 @@ import (
 )
 
 // parseList parses vpngate CSV.
-func parseList(f io.Reader) (map[string]VPN, error) {
+func parseList(f io.Reader) ([]*VPN, error) {
 	// First read to ignore invalid lines (first "*vpnservers", last "*").
 	r := bufio.NewReader(f)
 	var buf bytes.Buffer
@@ -35,7 +35,7 @@ func parseList(f io.Reader) (map[string]VPN, error) {
 	if err != nil {
 		return nil, err
 	}
-	m := make(map[string]VPN)
+	var s []*VPN
 	for {
 		vpn, err := parseRecord(c)
 		if err == io.EOF {
@@ -43,12 +43,9 @@ func parseList(f io.Reader) (map[string]VPN, error) {
 		} else if err != nil {
 			return nil, err
 		}
-		if _, ok := m[vpn.Hostname]; ok {
-			return nil, fmt.Errorf("%s already exists", vpn.Hostname)
-		}
-		m[vpn.Hostname] = *vpn
+		s = append(s, vpn)
 	}
-	return m, nil
+	return s, nil
 }
 
 // parseRecord parses a CSV record into a VPN.
